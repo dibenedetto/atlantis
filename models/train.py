@@ -17,18 +17,18 @@ def get_arguments(
     INPUT_SIZE = '640',
     MODEL = 'AquaNet',
     NUM_CLASSES = 56,
-    SNAPSHOT_DIR = 'C:/devel/atlantis/aquanet/snapshots/aquanet',
-    DATA_DIRECTORY = 'C:/devel/atlantis/atlantis',
+    SNAPSHOT_DIR = './snapshots/aquanet',
+    DATA_DIRECTORY = './dataset',
     BATCH_SIZE = 2,
     NUM_WORKERS = 4,
     LEARNING_RATE = 2.5e-4,
     MOMENTUM = 0.9,
     WEIGHT_DECAY = 0.0001,
-    NUM_EPOCHS = 30,
-    #NUM_EPOCHS = 1,
+    #NUM_EPOCHS = 30,
+    NUM_EPOCHS = 1,
     POWER = 0.9,
-    RESTORE_FROM = './network/resnet101-imagenet.pth'
-    #RESTORE_FROM = 'C:/devel/atlantis/aquanet/snapshots/aquanet/epoch29.pth'
+    #RESTORE_FROM = './snapshots/resnet101-imagenet.pth'
+    RESTORE_FROM = './snapshots/aquanet/epoch29.pth'
     ):
 
     parser = argparse.ArgumentParser(description="All Networks")
