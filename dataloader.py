@@ -55,7 +55,11 @@ class ATLANTIS(data.Dataset):
         name = self.items_list[index]["name"]
         image = Image.open(image_path).convert("RGB")
         width, height = image.size
-        label = Image.open(label_path)
+        label = None
+        try:
+            label = Image.open(label_path)
+        except:
+            label = Image.new("L", (width, height))
 
         if self.joint_transform:
             image, label = self.joint_transform(image, label)

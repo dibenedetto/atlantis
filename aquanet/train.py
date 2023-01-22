@@ -11,27 +11,31 @@ from torch.utils import data
 import torch.backends.cudnn as cudnn
 import torch.optim as optim
 
+import re
+
 def get_arguments(
     INPUT_SIZE = '640',
     MODEL = 'AquaNet',
     NUM_CLASSES = 56,
-    SNAPSHOT_DIR = './snapshots/aquanet',
-    DATA_DIRECTORY = '../atlantis/',
+    SNAPSHOT_DIR = 'C:/devel/atlantis/aquanet/snapshots/aquanet',
+    DATA_DIRECTORY = 'C:/devel/atlantis/atlantis',
     BATCH_SIZE = 2,
     NUM_WORKERS = 4,
     LEARNING_RATE = 2.5e-4,
     MOMENTUM = 0.9,
     WEIGHT_DECAY = 0.0001,
     NUM_EPOCHS = 30,
+    #NUM_EPOCHS = 1,
     POWER = 0.9,
     RESTORE_FROM = './network/resnet101-imagenet.pth'
+    #RESTORE_FROM = 'C:/devel/atlantis/aquanet/snapshots/aquanet/epoch29.pth'
     ):
 
     parser = argparse.ArgumentParser(description="All Networks")
     parser.add_argument("--input-size", type=int, default=INPUT_SIZE,
-                        help="Comma-separated string with height and width of s")
+                        help="Comma-separated string with height and width of the input image.")
     parser.add_argument("--model", type=str, default=MODEL,
-                        help="available options : PSPNet")
+                        help="available options : AquaNet, PSPNet, DANet, ANNet, EMANet, CCNet, DeepLabV3, OCRNet, OCNet, GCNet, DNLNet.")
     parser.add_argument("--restore-from", type=str, default=RESTORE_FROM,
                         help="Where restore model parameters from.")
     parser.add_argument("--num-classes", type=int, default=NUM_CLASSES,
@@ -94,6 +98,9 @@ def main():
 
     interp = nn.Upsample(size=(args.input_size, args.input_size), mode='bilinear', align_corners=True)
 
+    start_epoch = re.findall('[0-9]+', args.restore_from)
+    start_epoch = (int(start_epoch[-1]) + 1) if (len(start_epoch) > 0) else 0
+
     i_iter = 0
     for epoch in range(args.num_epochs):
         for images, labels, _, _, _ in trainloader:
@@ -110,8 +117,8 @@ def main():
             loss.backward()
             optimizer.step()
 
-            print('epoch = {0:4d}, iter = {1:8d}/{2:8d}, loss_seg = {3:.3f}'.format(epoch, i_iter, args.num_epochs*len(trainloader), loss))
-        torch.save(model.state_dict(), os.path.join(args.snapshot_dir, 'epoch' + str(epoch) + '.pth'))
+            print('epoch = {0:4d}, iter = {1:8d}/{2:8d}, loss_seg = {3:.3f}'.format(start_epoch + epoch, i_iter, args.num_epochs*len(trainloader), loss))
+        torch.save(model.state_dict(), os.path.join(args.snapshot_dir, 'epoch' + str(start_epoch + epoch) + '.pth'))
 
 
 if __name__ == '__main__':

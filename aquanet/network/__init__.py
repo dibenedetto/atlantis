@@ -44,7 +44,7 @@ def build_model(args):
     for key, value in saved_state_dict.items():
         if key.split(".")[0] not in ["fc"]:
             new_params[key] = value
-    model.backbone.load_state_dict(new_params)
+    model.backbone.load_state_dict(new_params, strict=False)
 
     return model
 

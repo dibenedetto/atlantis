@@ -90,14 +90,16 @@ def main(args):
     except FileExistsError:
         pass
 
-    saved_state_dict = torch.load(args.restore_from)
-    new_params = model.state_dict().copy()
+    saved_state_dict = torch.load(args.restore_from, map_location=torch.device('cpu'))
 
-    for key, value in saved_state_dict.items():
-        if key.split(".")[0] not in ["head", "dsn", "fc"]:
-            new_params[key] = value
-
-    model.load_state_dict(new_params, strict=False)
+    if args.restore_trained:
+        model.load_state_dict(saved_state_dict)
+    else:
+        new_params = model.state_dict().copy()
+        for key, value in saved_state_dict.items():
+            if key.split(".")[0] not in ["head", "dsn", "fc"]:
+                new_params[key] = value
+        model.load_state_dict(new_params, strict=False)
 
     model = model.cuda()
     model.train()
@@ -136,11 +138,11 @@ def main(args):
     lr_poly = AdjustLearningRate(optimizer, args.learning_rate, max_iter, args.power)
 
     for epoch in range(args.num_epochs):
-        print(f"Epoch {epoch + 1}\n-------------------------------")
+        print(f"Epoch {epoch + 1 + args.start_epoch}\n-------------------------------")
         train_loop(train_dataloader, model, loss_fn, optimizer, lr_poly, interpolation)
         val_loop(val_dataloader, model, loss_fn, interpolation)
         torch.save(model.state_dict(),
-                   os.path.join(args.snapshot_dir, "epoch" + str(epoch + 1) + ".pth"))
+                   os.path.join(args.snapshot_dir, "epoch" + str(epoch + 1 + args.start_epoch) + ".pth"))
     print("Done!")
 
 
@@ -186,6 +188,10 @@ def get_arguments(
                         help="Number of epochs for training.")
     parser.add_argument("--power", type=float, default=POWER,
                         help="Decay parameter to compute the learning rate.")
+    parser.add_argument("--start-epoch", type=int, default=0,
+                        help="Starting epoch (for text display only).")
+    parser.add_argument("--restore-trained", action="store_true",
+                        help="Restore from trained network.")
 
     return parser.parse_args()
 
@@ -193,4 +199,11 @@ def get_arguments(
 if __name__ == "__main__":
     args = get_arguments()
     print(f"{args.model} is deployed on {torch.cuda.get_device_name(0)}")
+    #args.restore_from    = "snapshots/review_results/epoch30.pth"
+    #args.start_epoch     = 30
+    #args.num_epochs      = 10
+    #args.learning_rate   = 0.00002
+    #args.restore_trained = True
+    #args.num_classes     = 3
+    #print(args.restore_trained)
     main(args)
