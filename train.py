@@ -14,7 +14,7 @@ import torch.optim as optim
 import re
 
 def get_arguments(
-    INPUT_SIZE = '640',
+    INPUT_SIZE = 640,
     MODEL = 'AquaNet',
     NUM_CLASSES = 56,
     SNAPSHOT_DIR = './snapshots/aquanet',

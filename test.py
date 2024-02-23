@@ -18,15 +18,15 @@ from dataloader.AtlantisLoader import AtlantisDataSet
 MODEL = 'AquaNet'
 NAME = MODEL.lower()
 SPLIT = 'test'
-SPLIT = 'val'
-SPLIT = 'test2'
+#SPLIT = 'val'
+#SPLIT = 'test2'
 NUM_CLASSES = 56
 BATCH_SIZE = 1
 NUM_WORKERS = 1
-PADDING_SIZE = '768'
-DATA_DIRECTORY = './aquanet/../atlantis/'
-SAVE_PATH = './aquanet/./result/'+SPLIT+'/'+NAME
-RESTORE_FROM = './aquanet/./snapshots/'+NAME+'/epoch29.pth'
+PADDING_SIZE = 768
+DATA_DIRECTORY = './dataset'
+SAVE_PATH = './result/'+SPLIT+'/'+NAME
+RESTORE_FROM = './snapshots/'+NAME+'/epoch29.pth'
 
 def get_arguments():
 	parser = argparse.ArgumentParser(description="Network")

@@ -67,7 +67,7 @@ class AtlantisDataSet(data.Dataset):
         image = self.image_transform(image)
         label = self.label_transform(label)
 
-        if self.split == 'val' or self.split == 'test':
+        if False and (self.split == 'val' or self.split == 'test'):
             top_pad =  self.padding_size - image.shape[1]
             right_pad =  self.padding_size - image.shape[2]
             image = np.lib.pad(image, ((0, 0), (top_pad, 0), (0, right_pad)), mode='constant', constant_values=0)
